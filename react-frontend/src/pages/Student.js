@@ -69,9 +69,9 @@ studentsDetails = students.map( (item, index) => {
 });
 
   return (
-    <div className='container mt-5'>
+    <div className="container mt-5" style={{marginBottom: '8%'}}>
         <div className="row">
-            <div className='col-md-12'>
+            <div className="col-md-12">
                 <div className="card">
                     <div className="card-header">
                         <h4>Students List
