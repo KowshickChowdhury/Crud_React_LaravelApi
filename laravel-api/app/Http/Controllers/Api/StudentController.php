@@ -150,4 +150,19 @@ class StudentController extends Controller
         }
     }
 
+    public function search($key){
+        $student = Student::where('name','Like',"%$key%")->get();
+        if($student){
+            return response()->json([
+                'status' => 200,
+                'message' => $student
+            ], 200);
+        }else{
+            return response()->json([
+                'status' => 404,
+                'message' => "No Such Student Found"
+            ], 404);
+        }
+    }
+
 }

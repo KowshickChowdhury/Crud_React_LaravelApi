@@ -6,6 +6,7 @@ import StudentList from '../pages/Student';
 import StudentCreate from '../pages/StudentCreate';
 import StudentEdit from '../pages/StudentEdit';
 import { Routes, Route } from 'react-router-dom';
+import SearchedStudent from '../pages/SearchedStudent';
 
 export default function MyRoutes() {
   return (
@@ -16,6 +17,7 @@ export default function MyRoutes() {
         <Route path='/students' element={<StudentList />}></Route>
         <Route path='/students/create' element={<StudentCreate />}></Route>
         <Route path='/students/:id/edit' element={<StudentEdit />}></Route>
+        <Route path='/students/search' element={<SearchedStudent />}></Route>
     </Routes>
   )
 }
