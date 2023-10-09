@@ -87,7 +87,7 @@ export default function SearchedStudent() {
                       </tr>
                     </thead>
                     <tbody className='text-center'>
-                      {student.map((item, index) => (
+                      { student && student.map((item, index) => (
                         <tr key={index}>
                           <td>{item.id}</td>
                           <td>{item.name}</td>

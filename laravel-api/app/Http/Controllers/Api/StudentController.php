@@ -9,19 +9,24 @@ use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
-    public function index(){
-        $students = Student::all();
-        if($students->count() > 0){
-            return response()->json([
-                'status' => 200,
-                'students' => $students
-            ], 200);
-        }else{
-            return response()->json([
-                'status' => 404,
-                'message' => "No Records Found"
-            ], 404);
-        }
+    public function index(request $request){
+        // $students = Student::all();
+        // if($students->count() > 0){
+        //     return response()->json([
+        //         'status' => 200,
+        //         'students' => $students
+        //     ], 200);
+        // }else{
+        //     return response()->json([
+        //         'status' => 404,
+        //         'message' => "No Records Found"
+        //     ], 404);
+        // }
+        
+        $perPage = $request->input('per_page'); // Default to 10 items per page
+        $students = Student::paginate($perPage);
+
+        return response()->json($students);
     }
 
     public function store(Request $request)

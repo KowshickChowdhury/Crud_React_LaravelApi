@@ -9,12 +9,15 @@ import { Routes, Route } from 'react-router-dom';
 import SearchedStudent from '../pages/SearchedStudent';
 
 export default function MyRoutes() {
+
+  const pageSize = 2;
+
   return (
     <Routes>
         <Route path='/' element={<Home />}></Route>
         <Route path='/about' element={<About />}></Route>
         <Route path='/contact' element={<Contact />}></Route>
-        <Route path='/students' element={<StudentList />}></Route>
+        <Route path='/students' element={<StudentList pageSize={pageSize} />}></Route>
         <Route path='/students/create' element={<StudentCreate />}></Route>
         <Route path='/students/:id/edit' element={<StudentEdit />}></Route>
         <Route path='/students/search' element={<SearchedStudent />}></Route>
