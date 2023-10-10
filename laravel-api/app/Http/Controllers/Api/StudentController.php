@@ -6,6 +6,8 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+
 
 class StudentController extends Controller
 {
@@ -154,6 +156,35 @@ class StudentController extends Controller
             ], 404);
         }
     }
+
+    public function destroyMultiple(Request $request)
+{
+    $studentIds = $request->input('student_ids');
+
+    // Use a transaction to ensure atomicity
+    DB::beginTransaction();
+
+    try {
+        // Delete the selected students
+        Student::whereIn('id', $studentIds)->delete();
+
+        // Commit the transaction
+        DB::commit();
+
+        return response()->json([
+            'status' => 200,
+            'message' => "Students Deleted Successfully"
+        ], 200);
+    } catch (\Exception $e) {
+        // Rollback the transaction in case of an error
+        DB::rollback();
+
+        return response()->json([
+            'status' => 500,
+            'message' => "An error occurred while deleting students."
+        ], 500);
+    }
+}
 
     public function search($key){
         $student = Student::where('name','Like',"%$key%")->get();

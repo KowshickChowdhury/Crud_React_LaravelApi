@@ -11,10 +11,10 @@ export default function Student(props) {
     const [page, setPage] = useState(1);
     // const [currentPage, setCurrentPage] = useState(0);
     const [totalResults, setTotalResults] = useState(0);
+    const [selectedStudents, setSelectedStudents] = useState([]);
     // const perPage = 2;
 
     useEffect(() => {
-        // axios.get(`http://127.0.0.1:8000/api/students?page=${currentPage + 1}$per_page=${perPage}`)
         axios.get(`http://127.0.0.1:8000/api/students?page=${page}&per_page=${props.pageSize}`)
         .then(res => {
             console.log("API response:",res)
@@ -51,6 +51,40 @@ export default function Student(props) {
 
         });
 
+    };
+
+    const toggleStudentSelection = (id) => {
+      // Toggle the selection of a student by adding or removing their ID from the selectedStudents array
+      if (selectedStudents.includes(id)) {
+        setSelectedStudents(selectedStudents.filter((studentId) => studentId !== id));
+      } else {
+        setSelectedStudents([...selectedStudents, id]);
+      }
+    };
+
+    const deleteSelectedStudents = () => {
+      if (selectedStudents.length === 0) {
+        alert('Please select at least one student to delete.');
+        return;
+      }
+    
+      const confirmation = window.confirm('Are you sure you want to delete selected students?');
+    
+      if (confirmation) {
+        axios
+          .post('http://127.0.0.1:8000/api/students/delete-multiple', {
+            student_ids: selectedStudents,
+          })
+          .then((res) => {
+            alert(res.data.message);
+            // Remove deleted students from the students state
+            setStudents(students.filter((student) => !selectedStudents.includes(student.id)));
+            setSelectedStudents([]); // Clear selected students
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
     };
 
     const handlePrevClick = async () => {
@@ -118,6 +152,11 @@ if (students && students.length > 0) {
 studentsDetails = students.map( (item, index) => {
     return(
         <tr key={index}>
+            <td><input
+          type="checkbox"
+          checked={selectedStudents.includes(item.id)}
+          onChange={() => toggleStudentSelection(item.id)}
+        /></td>
             <td>{item.id}</td>
             <td>{item.name}</td>
             <td>{item.course}</td>
@@ -148,13 +187,17 @@ studentsDetails = students.map( (item, index) => {
                 <div className="card">
                     <div className="card-header">
                         <h4>Students List
-                        <Link to="/students/create" className='btn btn-primary float-end'>Add Student</Link>
+                          <button type="button"className="btn btn-danger float-end" onClick={deleteSelectedStudents} >
+                            Delete Selected
+                          </button>
+                          <Link to="/students/create" className='btn btn-primary float-end'>Add Student</Link>
                         </h4>
                     </div>
                     <div className="card-body">
                         <table className="table table-striped table-bordered">
                         <thead style={{backgroundColor : '#e0e0e0'}}>
                             <tr className='text-center'>
+                                <th></th>
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Course</th>
@@ -168,24 +211,25 @@ studentsDetails = students.map( (item, index) => {
                             {studentsDetails}
                         </tbody>
                         </table>
-                        <div>
-      <div className='container d-flex justify-content-between'>
-        <button type="button" disabled={page <= 1} className="btn btn-dark" onClick={handlePrevClick}>&larr; Previous</button>
-        <div className="pagination">
-                {pageNumbers.map((pageNumber) => (
-                  <button
-                    key={pageNumber}
-                    onClick={() => handlePageChange(pageNumber)}
-                    className={`btn btn-primary ${pageNumber === page ? 'active' : ''}`}
-                  >
-                    {pageNumber}
-                  </button>
-                ))};
-        </div>
-        <button type="button" disabled={page + 1 > Math.ceil(totalResults / props.pageSize)} className="btn btn-dark" onClick={handleNextClick}>Next &rarr;</button>
-      </div>
-      {/* Render your articles or student data here */}
-    </div>
+                        
+                      <div className='container d-flex justify-content-between'>
+                        <button type="button" disabled={page <= 1} className="btn btn-dark" onClick={handlePrevClick}>&larr; Previous</button>
+                        <div className="pagination">
+                                {pageNumbers.map((pageNumber) => (
+                                  <button
+                                    key={pageNumber}
+                                    onClick={() => handlePageChange(pageNumber)}
+                                    className={`btn btn-primary ${pageNumber === page ? 'active' : ''}`}
+                                    style={{marginRight:"5px"}}
+                                  >
+                                    {pageNumber}
+                                  </button>
+                                ))};
+                        </div>
+                        <button type="button" disabled={page + 1 > Math.ceil(totalResults / props.pageSize)} className="btn btn-dark" onClick={handleNextClick}>Next &rarr;</button>
+                      </div>
+                      {/* Render your articles or student data here */}
+    
 
                         {/* <ReactPaginate
                             pageCount={Math.ceil(totalStudents / perPage)}
